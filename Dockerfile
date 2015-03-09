@@ -69,7 +69,9 @@ ADD config/unicorn.rb /app/config/unicorn.rb
 # Add default foreman config
 ADD Procfile /app/Procfile
 
-ENV RAILS_ENV production
+ENV RAILS_ENV development
+
+#CMD bundle exec rake db:migrate RAILS_ENV=
 
 CMD bundle exec rake assets:precompile && foreman start -f Procfile
 
