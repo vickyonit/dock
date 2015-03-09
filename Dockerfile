@@ -42,7 +42,7 @@ RUN apt-get install -qq -y nginx
 RUN echo "\ndaemon off;" >> /etc/nginx/nginx.conf
 RUN chown -R www-data:www-data /var/lib/nginx
 # Add default nginx config
-ADD nginx-sites.conf /etc/nginx/sites-enabled/default
+ADD config/nginx-sites.conf /etc/nginx/sites-enabled/default
 
 # Install foreman
 RUN gem install foreman
@@ -58,13 +58,13 @@ RUN gem install foreman
 
 # Install Rails App
 WORKDIR /app
-ONBUILD ADD Gemfile /app/Gemfile
-ONBUILD ADD Gemfile.lock /app/Gemfile.lock
-ONBUILD RUN bundle install --without development test
-ONBUILD ADD . /app
+ADD Gemfile /app/Gemfile
+ADD Gemfile.lock /app/Gemfile.lock
+RUN bundle install --without development test
+ADD . /app
 
 # Add default unicorn config
-ADD unicorn.rb /app/config/unicorn.rb
+ADD config/unicorn.rb /app/config/unicorn.rb
 
 # Add default foreman config
 ADD Procfile /app/Procfile
@@ -72,3 +72,5 @@ ADD Procfile /app/Procfile
 ENV RAILS_ENV production
 
 CMD bundle exec rake assets:precompile && foreman start -f Procfile
+
+EXPOSE 5658
